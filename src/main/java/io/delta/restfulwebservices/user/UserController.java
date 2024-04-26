@@ -1,11 +1,13 @@
 package io.delta.restfulwebservices.user;
 
 
+import io.delta.restfulwebservices.user.exceptions.UserNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 @RestController
 public class UserController {
@@ -22,7 +24,13 @@ public class UserController {
     }
 
     @GetMapping(path = "/users/{id}")
-    public UserEntity getUserById(@PathVariable("id") String id) {
-        final  _userServices.getAllUsers();
+    public UserEntity getUserById(@PathVariable("id") long id) {
+        final UserEntity user =  _userServices.findOne(id);
+
+        if(user == null) {
+            throw new UserNotFoundException("User with id " + id + " not found");
+        }
+
+        return user;
     }
 }
